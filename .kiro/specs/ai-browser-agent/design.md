@@ -15,9 +15,11 @@ graph TB
     AI --> BC[Browser Controller]
     AI --> CM[Context Manager]
     AI --> SL[Security Layer]
+    AI --> SA[Spam Analyzer]
     BC --> Browser[Web Browser]
     CM --> AI
     SL --> UI
+    SA --> AI
     
     subgraph "External Services"
         Claude[Claude API]
@@ -26,6 +28,8 @@ graph TB
     
     AI --> Claude
     AI --> OpenAI
+    SA --> Claude
+    SA --> OpenAI
 ```
 
 ### Component Interaction Flow
@@ -120,7 +124,36 @@ class SecurityLayer:
     def log_security_event(self, event: SecurityEvent) -> None
 ```
 
-### 5. User Interface
+### 5. Spam Analyzer
+
+**Purpose**: Provides intelligent spam detection with configurable thresholds
+
+**Key Classes**:
+- `SpamAnalyzer`: Main spam detection engine
+- `ContentAnalyzer`: Analyzes email content for spam indicators
+- `SenderAnalyzer`: Evaluates sender reputation and patterns
+- `SpamScorer`: Calculates final spam probability scores
+- `ThresholdManager`: Manages configurable spam detection thresholds
+
+**Interfaces**:
+```python
+class SpamAnalyzer:
+    def analyze_email(self, email_content: EmailContent) -> SpamAnalysisResult
+    def calculate_spam_score(self, features: SpamFeatures) -> float
+    def classify_as_spam(self, spam_score: float, threshold: float = 0.30) -> bool
+    def get_analysis_details(self, email_content: EmailContent) -> SpamAnalysisDetails
+
+class ContentAnalyzer:
+    def extract_features(self, email_content: str) -> ContentFeatures
+    def analyze_subject(self, subject: str) -> SubjectAnalysis
+    def analyze_body(self, body: str) -> BodyAnalysis
+
+class SenderAnalyzer:
+    def analyze_sender(self, sender_email: str, sender_name: str) -> SenderAnalysis
+    def check_domain_reputation(self, domain: str) -> DomainReputation
+```
+
+### 6. User Interface
 
 **Purpose**: Provides communication channel between user and agent
 
@@ -166,6 +199,46 @@ class ExecutionPlan:
     current_step: int
     context: Dict[str, Any]
     fallback_strategies: List[str]
+
+@dataclass
+class EmailContent:
+    subject: str
+    sender_email: str
+    sender_name: str
+    body: str
+    headers: Dict[str, str]
+    timestamp: datetime
+    attachments: List[str]
+
+@dataclass
+class SpamAnalysisResult:
+    spam_score: float
+    is_spam: bool
+    confidence: float
+    features_analyzed: List[str]
+    analysis_details: Dict[str, Any]
+
+@dataclass
+class SpamFeatures:
+    content_features: ContentFeatures
+    sender_features: SenderFeatures
+    metadata_features: MetadataFeatures
+
+@dataclass
+class ContentFeatures:
+    suspicious_keywords_count: int
+    caps_lock_ratio: float
+    exclamation_count: int
+    url_count: int
+    suspicious_urls: List[str]
+    language_quality_score: float
+
+@dataclass
+class SenderFeatures:
+    domain_reputation: float
+    sender_history_score: float
+    is_known_sender: bool
+    domain_age: Optional[int]
 ```
 
 ### Enumerations
@@ -233,10 +306,11 @@ class ErrorHandler:
 ### Test Scenarios
 
 1. **Email Management**: Test spam detection and email organization
-2. **Online Ordering**: Test product search and cart management
-3. **Error Recovery**: Test handling of various error conditions
-4. **Security Validation**: Test destructive action prevention
-5. **Context Management**: Test token optimization and content extraction
+2. **Intelligent Spam Detection**: Test spam scoring algorithm with various email types and threshold configurations
+3. **Online Ordering**: Test product search and cart management
+4. **Error Recovery**: Test handling of various error conditions
+5. **Security Validation**: Test destructive action prevention
+6. **Context Management**: Test token optimization and content extraction
 
 ### Performance Testing
 
@@ -244,6 +318,71 @@ class ErrorHandler:
 - **Memory Usage**: Monitor browser and Python process memory
 - **Token Efficiency**: Measure AI model token usage optimization
 - **Concurrent Tasks**: Test multiple simultaneous task execution
+
+## Spam Detection Algorithm
+
+### Spam Analysis Pipeline
+
+The spam detection system uses a multi-layered approach combining rule-based analysis with AI-powered content evaluation:
+
+```mermaid
+graph LR
+    Email[Email Content] --> CE[Content Extraction]
+    CE --> FA[Feature Analysis]
+    FA --> SA[Sender Analysis]
+    SA --> AI[AI Content Analysis]
+    AI --> SS[Score Calculation]
+    SS --> TC[Threshold Comparison]
+    TC --> Result[Spam Classification]
+```
+
+### Feature Analysis Components
+
+1. **Content Analysis**:
+   - Suspicious keyword detection (promotional terms, urgency indicators)
+   - Text quality assessment (grammar, spelling, coherence)
+   - URL analysis (suspicious domains, shortened links)
+   - Formatting patterns (excessive caps, punctuation)
+
+2. **Sender Analysis**:
+   - Domain reputation scoring
+   - Sender history evaluation
+   - Email address pattern analysis
+   - Authentication header validation (SPF, DKIM, DMARC)
+
+3. **Metadata Analysis**:
+   - Header analysis for spoofing indicators
+   - Timestamp patterns
+   - Routing information evaluation
+
+### Scoring Algorithm
+
+```python
+def calculate_spam_score(features: SpamFeatures) -> float:
+    # Weighted combination of feature scores
+    content_weight = 0.4
+    sender_weight = 0.35
+    metadata_weight = 0.25
+    
+    content_score = analyze_content_features(features.content_features)
+    sender_score = analyze_sender_features(features.sender_features)
+    metadata_score = analyze_metadata_features(features.metadata_features)
+    
+    final_score = (
+        content_score * content_weight +
+        sender_score * sender_weight +
+        metadata_score * metadata_weight
+    )
+    
+    return min(max(final_score, 0.0), 1.0)  # Clamp to [0.0, 1.0]
+```
+
+### Threshold Configuration
+
+- **Default Threshold**: 0.30 (configurable)
+- **Conservative Mode**: 0.50 (fewer false positives)
+- **Aggressive Mode**: 0.15 (catches more spam, more false positives)
+- **Custom Thresholds**: User-configurable per email account
 
 ## Implementation Considerations
 
@@ -264,6 +403,8 @@ class ErrorHandler:
 - **HTML Parsing**: BeautifulSoup for content extraction
 - **Text Processing**: spaCy or NLTK for natural language processing
 - **Image Analysis**: Optional OCR for image-based content
+- **Spam Analysis**: Machine learning-based content analysis with AI model integration
+- **Feature Extraction**: Statistical analysis of email content, sender patterns, and metadata
 
 ### Security Measures
 

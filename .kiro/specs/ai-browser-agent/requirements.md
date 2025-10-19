@@ -12,6 +12,9 @@ An AI-powered browser automation agent that autonomously controls a web browser 
 - **Context_Manager**: The component that manages AI token limitations when processing web content
 - **Security_Layer**: The safety mechanism that prompts users before destructive actions
 - **User_Interface**: The communication channel between user and AI_Agent (terminal or separate window)
+- **Spam_Analyzer**: The component that calculates spam probability scores for email content
+- **Spam_Threshold**: The configurable decimal value (default 0.30) used to classify emails as spam
+- **Spam_Score**: A decimal value between 0.0 and 1.0 indicating the probability that an email is spam
 
 ## Requirements
 
@@ -65,15 +68,16 @@ An AI-powered browser automation agent that autonomously controls a web browser 
 
 ### Requirement 5
 
-**User Story:** As a user, I want the agent to handle email management tasks, so that I can automate spam detection and inbox organization.
+**User Story:** As a user, I want the agent to handle email management tasks with intelligent spam detection, so that I can automate accurate spam filtering and inbox organization.
 
 #### Acceptance Criteria
 
 1. WHEN tasked with email management, THE AI_Agent SHALL navigate to the specified email service
 2. THE AI_Agent SHALL read email metadata including subject, sender, and content summaries
-3. THE AI_Agent SHALL analyze emails to identify spam based on content patterns and sender reputation
-4. THE AI_Agent SHALL perform email actions such as deletion, marking as spam, or moving to folders
-5. THE AI_Agent SHALL provide detailed reports of actions taken and emails processed
+3. THE AI_Agent SHALL analyze emails using intelligent spam detection algorithms that calculate spam probability scores
+4. WHEN an email receives a spam probability score of 0.30 or higher, THE AI_Agent SHALL classify the email as spam
+5. THE AI_Agent SHALL perform email actions such as deletion, marking as spam, or moving to folders based on spam classification
+6. THE AI_Agent SHALL provide detailed reports of actions taken, emails processed, and spam scores calculated
 
 ### Requirement 6
 
@@ -100,6 +104,18 @@ An AI-powered browser automation agent that autonomously controls a web browser 
 5. THE Security_Layer SHALL log all security prompts and user responses for audit purposes
 
 ### Requirement 8
+
+**User Story:** As a user, I want the system to use intelligent spam analysis with configurable thresholds, so that I can achieve accurate spam detection without false positives.
+
+#### Acceptance Criteria
+
+1. THE AI_Agent SHALL implement a spam scoring algorithm that analyzes email content, sender patterns, and metadata
+2. THE AI_Agent SHALL calculate spam probability scores as decimal values between 0.0 and 1.0
+3. THE AI_Agent SHALL use a configurable spam threshold with a default value of 0.30
+4. WHEN an email's spam score meets or exceeds the configured threshold, THE AI_Agent SHALL classify it as spam
+5. THE AI_Agent SHALL provide spam score details in task reports for transparency and debugging
+
+### Requirement 9
 
 **User Story:** As a user, I want to communicate with the agent through a user-friendly interface, so that I can easily submit tasks and receive updates.
 

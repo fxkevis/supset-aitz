@@ -1,0 +1,61 @@
+{
+  "browser": {
+    "headless": false,
+    "window_size": [1920, 1080],
+    "timeout": 30,
+    "user_agent": null,
+    "browser_type": "chrome",
+    "profile_path": null,
+    "download_directory": null,
+    "disable_images": false,
+    "disable_javascript": false,
+    "disable_plugins": false,
+    "enable_logging": true,
+    "log_level": "INFO"
+  },
+  "security": {
+    "require_confirmation_for_payments": true,
+    "require_confirmation_for_deletions": true,
+    "require_confirmation_for_modifications": true,
+    "require_confirmation_for_submissions": false,
+    "sensitive_domains": [
+      "paypal.com",
+      "stripe.com",
+      "amazon.com",
+      "ebay.com",
+      "banking",
+      "payment",
+      "checkout"
+    ],
+    "destructive_patterns": [
+      "delete",
+      "remove",
+      "cancel",
+      "unsubscribe",
+      "purchase",
+      "buy",
+      "pay",
+      "order",
+      "checkout"
+    ],
+    "max_task_duration": 3600,
+    "max_retry_attempts": 3,
+    "audit_log_enabled": true,
+    "audit_log_file": "logs/audit.log"
+  },
+  "ai_model": {
+    "primary_model": "claude",
+    "fallback_model": "openai",
+    "claude_api_key": null,
+    "openai_api_key": null,
+    "max_tokens": 4000,
+    "temperature": 0.7,
+    "timeout": 30,
+    "max_context_length": 8000,
+    "context_overlap": 200
+  },
+  "debug_mode": false,
+  "log_file": "logs/app.log",
+  "data_directory": "data",
+  "temp_directory": "temp"
+}

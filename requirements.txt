@@ -1,0 +1,17 @@
+# Core dependencies for AI Browser Agent
+selenium>=4.15.0
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+aiohttp>=3.8.0
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+click>=8.1.0
+rich>=13.0.0
+loguru>=0.7.0
+webdriver-manager>=4.0.0
+tiktoken>=0.5.0
+
+# AI Model APIs (required for AI functionality)
+openai>=1.0.0
+anthropic>=0.7.0

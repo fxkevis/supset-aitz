@@ -703,7 +703,7 @@ def main():
         print("Usage: python setup_agent.py \"<task>\"")
         print()
         print("Examples:")
-        print("  python setup_agent.py \"Open telegram.org and write hello to @stroiteeleva\"")
+        print("  python setup_agent.py \"Open telegram.org and write hello to @name\"")
         print("  python setup_agent.py \"Go to google.com and search for AI browser automation\"")
         print("  python setup_agent.py \"Open github.com\"")
         return
